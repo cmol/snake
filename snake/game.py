@@ -59,9 +59,6 @@ while done==False:
     snake1.add()
     del cheese
     cheese = Cheese(grid_size)
-  
-  print("snake", snake1.position()[0])
-  print("cheese", cheese.position())
     
   clock.tick(60)
   
