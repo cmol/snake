@@ -33,24 +33,25 @@ while done==False:
   for event in pygame.event.get():
     if event.type == pygame.QUIT: sys.exit()
   
-  if event.type == pygame.KEYDOWN:
+    if event.type == pygame.KEYDOWN:
     # Figure out if it was an arrow key, and set direction
-    if event.key == pygame.K_LEFT:
-      snake1.direc(2)
-    if event.key == pygame.K_RIGHT:
-      snake1.direc(0)
-    if event.key == pygame.K_UP:
-      snake1.direc(3)
-    if event.key == pygame.K_DOWN:
-      snake1.direc(1)
-      
-  if pos_x >= grid_size or pos_y >= grid_size or pos_x < 0 or pos_y < 0:
-    sys.exit()
+      if event.key == pygame.K_LEFT:
+        snake1.direc(2)
+      if event.key == pygame.K_RIGHT:
+        snake1.direc(0)
+      if event.key == pygame.K_UP:
+        snake1.direc(3)
+      if event.key == pygame.K_DOWN:
+        snake1.direc(1)
   
+  # Check for collision with walls
+  if snake1.oos(grid_size) == True:
+    sys.exit()
   # Limit to 60 FPS
+
+  # Move the snake
   snake1.move()
   clock.tick(60)
-#  print (clock.get_fps())
   
   # Clear screen and draw background
   screen.fill(bg_color)
