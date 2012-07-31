@@ -21,7 +21,6 @@ class Snake(object):
       self.add = False
     else:
       self.snake_arr.pop()
-      print(self.snake_arr)
       
   def add(self):
     self.add = True
@@ -31,3 +30,10 @@ class Snake(object):
   
   def direc(self, direction):
     self.direction = direction
+  
+  # Out of stage
+  def oos(self, grid):
+    if self.snake_arr[0][0] >= grid or self.snake_arr[0][1] >= grid or self.snake_arr[0][0] < 0 or self.snake_arr[0][0] < 0:
+      return True
+    else:
+      return False
