@@ -1,0 +1,12 @@
+--- 
+cursor_positions: 
+  - :path: snake.py
+    :cursor_offset: 684
+    :timestamp: 2012-07-31 09:45:37 +02:00
+  - :path: snake/__init__.pyc
+    :cursor_offset: 0
+    :timestamp: 2012-07-31 10:11:26 +02:00
+  - :path: snake/game.pyc
+    :cursor_offset: 0
+    :timestamp: 2012-07-31 10:11:26 +02:00
+files_to_retain: 0
