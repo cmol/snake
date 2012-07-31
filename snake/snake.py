@@ -33,7 +33,7 @@ class Snake(object):
   
   # Out of stage
   def oos(self, grid):
-    if self.snake_arr[0][0] >= grid or self.snake_arr[0][1] >= grid or self.snake_arr[0][0] < 0 or self.snake_arr[0][0] < 0:
+    if self.snake_arr[0][0] >= grid or self.snake_arr[0][1] >= grid or self.snake_arr[0][0] < 0 or self.snake_arr[0][1] < 0:
       return True
     else:
       return False
