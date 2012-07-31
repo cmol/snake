@@ -61,6 +61,7 @@ while done==False:
     cheese = Cheese(grid_size)
     
   clock.tick(60)
+#  print(clock.get_fps())
   
   # Clear screen and draw background
   screen.fill(bg_color)
