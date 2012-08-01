@@ -105,7 +105,8 @@ class Game (object):
           if other_snake is not current_snake:
             if current_snake.collision(other_snake):
               print("collition")
-              sys.exit()
+              current_snake.add(-5)
+              #sys.exit()
 
       self.clock.tick(60)
     #  print(clock.get_fps())
