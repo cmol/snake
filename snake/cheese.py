@@ -6,7 +6,6 @@ class Cheese(object):
   
   def __init__(self, grid):
     self.pos = randint(0,grid-1), randint(0,grid-1)
-    print(self.pos)
   
   def position(self):
     return self.pos
