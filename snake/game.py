@@ -95,10 +95,10 @@ class Game (object):
       for snake in self.snakes:
         snake.move()
         
-      if snake.position()[0][0] == self.cheese.position()[0] and snake.position()[0][1] == self.cheese.position()[1]:
-        snake.add(10)
-        #del self.cheese
-        self.cheese = Cheese(self.grid_x, self.grid_y)
+        if snake.position()[0][0] == self.cheese.position()[0] and snake.position()[0][1] == self.cheese.position()[1]:
+          snake.add(10)
+          #del self.cheese
+          self.cheese = Cheese(self.grid_x, self.grid_y)
       
       for current_snake in self.snakes:
         for other_snake in self.snakes:
