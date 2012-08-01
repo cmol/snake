@@ -73,11 +73,18 @@ while done==False:
   for snake in snakes:
     snake.move()
   
+  current = 0
   for current_snake in snakes:
+    other = 0
     for other_snake in snakes:
       if other_snake is not current_snake:
         if current_snake.collision(other_snake):
           sys.exit()
+          #del snakes[other]
+      other += 1
+      ##sys.exit()
+    current += 1
+
 
 #    if snake.position()[0][0] == cheese.position()[0] and snake.position()[0][1] == cheese.position()[1]:
 #      snake.add(10)
