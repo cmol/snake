@@ -51,8 +51,8 @@ class Snake(object):
     return False
 
   # Out of stage
-  def oos(self, grid):
-    if self._snake_arr[0][0] >= grid or self._snake_arr[0][1] >= grid or self._snake_arr[0][0] < 0 or self._snake_arr[0][1] < 0:
+  def oos(self, grid_x, grid_y):
+    if self._snake_arr[0][0] >= grid_x or self._snake_arr[0][1] >= grid_y or self._snake_arr[0][0] < 0 or self._snake_arr[0][1] < 0:
       return True
     else:
       return False

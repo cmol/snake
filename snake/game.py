@@ -11,8 +11,10 @@ class Game (object):
   bg_color = 0, 0, 0
   done = False
 
-  grid_size = 100
   BLOCK_SIZE = 5
+  grid_size = 100
+  grid_x = pygame.display.Info().current_w / BLOCK_SIZE
+  grid_y = pygame.display.Info().current_h / BLOCK_SIZE
 
   pos_x, pos_y = 0, 0
   direction = 0
@@ -26,19 +28,24 @@ class Game (object):
 
   clock=pygame.time.Clock()
 
-  cheese = Cheese(grid_size)
-
   screen = None
   size = None
+  cheese = None
+  
+  fullscreen = pygame.FULLSCREEN
   
   # Constructor
-  def __init__(self, players, grid, block):
+  def __init__(self, players, grid, block, fullscreen):
+    
     self.grid_size = grid
+    if not fullscreen:
+      self.fullscreen = 0
+      self.grid_x , self.grid_y = self.grid_size, self.grid_size
     
-    self.size = width, height = self.grid_size*self.BLOCK_SIZE, self.grid_size*self.BLOCK_SIZE
-    self.screen = pygame.display.set_mode(self.size)
+    self.size = width, height = self.grid_x*self.BLOCK_SIZE, self.grid_y*self.BLOCK_SIZE
+    self.screen = pygame.display.set_mode(self.size, self.fullscreen)
     pygame.display.set_caption("Snake")
-    
+    self.cheese = Cheese(self.grid_x, self.grid_y)
     # Create the snakes
     for i in range(0,players):
       self.snakes.append(Snake(*self.SNAKE_POS[i]))
@@ -81,24 +88,24 @@ class Game (object):
       
       # Check for collision with walls
       for snake in self.snakes:
-        if snake.oos(self.grid_size) == True or snake.oos(self.grid_size) == True:
+        if snake.oos(self.grid_x, self.grid_y) == True:
           sys.exit()
 
       # Move the snake
       for snake in self.snakes:
         snake.move()
-        if snake.position()[0][0] == self.cheese.position()[0] and snake.position()[0][1] == self.cheese.position()[1]:
-          snake.add(10)
-          #del self.cheese
-          self.cheese = Cheese(self.grid_size)
+        
+      if snake.position()[0][0] == self.cheese.position()[0] and snake.position()[0][1] == self.cheese.position()[1]:
+        snake.add(10)
+        #del self.cheese
+        self.cheese = Cheese(self.grid_x, self.grid_y)
       
       for current_snake in self.snakes:
         for other_snake in self.snakes:
           if other_snake is not current_snake:
             if current_snake.collision(other_snake):
               print("collition")
-              current_snake.add(-5)
-              #sys.exit()
+              sys.exit()
 
       self.clock.tick(60)
     #  print(clock.get_fps())
