@@ -26,21 +26,24 @@ class Game (object):
 
   clock=pygame.time.Clock()
 
-
   cheese = Cheese(grid_size)
 
+  screen = None
+  size = None
+  
   # Constructor
   def __init__(self, players, grid, block):
     self.grid_size = grid
+    
+    self.size = width, height = self.grid_size*self.BLOCK_SIZE, self.grid_size*self.BLOCK_SIZE
+    self.screen = pygame.display.set_mode(self.size)
+    pygame.display.set_caption("Snake")
     
     # Create the snakes
     for i in range(0,players):
       self.snakes.append(Snake(*self.SNAKE_POS[i]))
 
   # Inititalize screen and set caption
-  size = width, height = grid_size*BLOCK_SIZE, grid_size*BLOCK_SIZE
-  screen = pygame.display.set_mode(size)
-  pygame.display.set_caption("Snake")
 
   # Draw a square
   def draw_square(self, screen, rect, color):
