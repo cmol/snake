@@ -36,7 +36,15 @@ class Snake(object):
   
   def direc(self, direction):
     self._direction = direction
-  
+
+  def collision(self, snake):
+    """ TODO: make hash instead of search """
+    for other_snake in snake._snake_arr:
+      for this_snake in self._snake_arr:
+        if other_snake == this_snake:
+          return True
+    return False
+
   # Out of stage
   def oos(self, grid):
     if self._snake_arr[0][0] >= grid or self._snake_arr[0][1] >= grid or self._snake_arr[0][0] < 0 or self._snake_arr[0][1] < 0:

@@ -73,11 +73,16 @@ while done==False:
   for snake in snakes:
     snake.move()
   
-  for snake in snakes:
-    if snake.position()[0][0] == cheese.position()[0] and snake.position()[0][1] == cheese.position()[1]:
-      snake.add(10)
-      del cheese
-      cheese = Cheese(grid_size)
+  for current_snake in snakes:
+    for other_snake in snakes:
+      if other_snake is not current_snake:
+        if current_snake.collision(other_snake):
+          sys.exit()
+
+#    if snake.position()[0][0] == cheese.position()[0] and snake.position()[0][1] == cheese.position()[1]:
+#      snake.add(10)
+#      del cheese
+#      cheese = Cheese(grid_size)
 
   clock.tick(60)
 #  print(clock.get_fps())
