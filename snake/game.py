@@ -17,10 +17,10 @@ class Game (object):
   pos_x, pos_y = 0, 0
   direction = 0
 
-  snakes = []  
+  snakes = []
   
   SNAKE_HEAD = [(18, 255, 0),(86,162,210),(209,86,210),(241,136,13)]
-  SNAKE_POS = [(3, 1), (3, 11), (3, 21), (3, 31)]
+  SNAKE_POS = [(4, 1), (50, 50), (23, 1), (33, 1)]
 
   CHEESE_COL = 255, 255, 0
 
@@ -41,7 +41,8 @@ class Game (object):
     
     # Create the snakes
     for i in range(0,players):
-      self.snakes.append(Snake(*self.SNAKE_POS[i]))
+      self.snakes.append(Snake(x = self.SNAKE_POS[i][0], y = self.SNAKE_POS[i][1]))
+      print i
 
   # Inititalize screen and set caption
 
@@ -89,17 +90,18 @@ class Game (object):
       # Move the snake
       for snake in self.snakes:
         snake.move()
+        
+      if snake.position()[0][0] == self.cheese.position()[0] and snake.position()[0][1] == self.cheese.position()[1]:
+        snake.add(10)
+        #del self.cheese
+        self.cheese = Cheese(self.grid_size)
       
       for current_snake in self.snakes:
         for other_snake in self.snakes:
           if other_snake is not current_snake:
             if current_snake.collision(other_snake):
+              print("collition")
               sys.exit()
-
-    #    if snake.position()[0][0] == cheese.position()[0] and snake.position()[0][1] == cheese.position()[1]:
-    #      snake.add(10)
-    #      del cheese
-    #      cheese = Cheese(grid_size)
 
       self.clock.tick(60)
     #  print(clock.get_fps())
