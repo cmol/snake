@@ -13,7 +13,6 @@ class Snake(object):
     self._snake_arr = []
     self._snake_arr.append([x,y])
     self._direction = self.DIRECTION_RIGHT
-    print(self._snake_arr)
 
   # Method for moving the snake
   def move(self):
