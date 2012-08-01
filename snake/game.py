@@ -20,7 +20,7 @@ CHEESE_COL = 255, 255, 0
 
 clock=pygame.time.Clock()
 
-snake1 = Snake()
+snakes = [Snake(x = 3,y = 1)]
 cheese = Cheese(grid_size)
 
 # Inititalize screen and set caption
@@ -35,28 +35,27 @@ def draw_square(screen, rect, color):
 while done==False:
   for event in pygame.event.get():
     if event.type == pygame.QUIT: sys.exit()
-  
+
     if event.type == pygame.KEYDOWN:
     # Figure out if it was an arrow key, and set direction
       if event.key == pygame.K_LEFT:
-        snake1.direc(2)
+        snakes[0].direc(Snake.DIRECTION_LEFT)
       if event.key == pygame.K_RIGHT:
-        snake1.direc(0)
+        snakes[0].direc(Snake.DIRECTION_RIGHT)
       if event.key == pygame.K_UP:
-        snake1.direc(3)
+        snakes[0].direc(Snake.DIRECTION_UP)
       if event.key == pygame.K_DOWN:
-        snake1.direc(1)
-  
+        snakes[0].direc(Snake.DIRECTION_DOWN)
+
   # Check for collision with walls
-  if snake1.oos(grid_size) == True:
+  if snakes[0].oos(grid_size) == True:
     sys.exit()
-  # Limit to 60 FPS
 
   # Move the snake
-  snake1.move()
+  snakes[0].move()
   
-  if snake1.position()[0][0] == cheese.position()[0] and snake1.position()[0][1] == cheese.position()[1]:
-    snake1.add()
+  if snakes[0].position()[0][0] == cheese.position()[0] and snakes[0].position()[0][1] == cheese.position()[1]:
+    snakes[0].add(10)
     del cheese
     cheese = Cheese(grid_size)
     
@@ -69,7 +68,7 @@ while done==False:
   draw_square(screen, [cheese.position()[0]*BLOCK_SIZE,cheese.position()[1]*BLOCK_SIZE,BLOCK_SIZE,BLOCK_SIZE], CHEESE_COL)
   
   # Draw the snake itself
-  for point in snake1.position():
+  for point in snakes[0].position():
       draw_square(screen, [point[0]*BLOCK_SIZE,point[1]*BLOCK_SIZE,BLOCK_SIZE,BLOCK_SIZE], SNAKE_HEAD)
   
   # Flip the buffer to the display to show the snake

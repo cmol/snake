@@ -1,39 +1,45 @@
 class Snake(object):
   """class for managin snake(s) - Snake"""
-  
+
+  DIRECTION_UP = 1 
+  DIRECTION_DOWN = 2 
+  DIRECTION_LEFT = 3 
+  DIRECTION_RIGHT = 4
+
   # Variables for Snake objects
-  snake_arr = [[3,3], [2,3], [1,3]]
-  add_tail = False
-  direction = 0
+  _snake_arr = []
+  _direction = 0 
+  _length = 9
+
+  def __init__(self, x, y): 
+    self._snake_arr.append([x,y])
+    self._direction = self.DIRECTION_RIGHT
 
   # Method for moving the snake
   def move(self):
-    if self.direction == 0:
-      self.snake_arr.insert(0, [self.snake_arr[0][0]+1, self.snake_arr[0][1]])
-    elif self.direction == 1:
-      self.snake_arr.insert(0, [self.snake_arr[0][0], self.snake_arr[0][1]+1])
-    elif self.direction == 2:
-      self.snake_arr.insert(0, [self.snake_arr[0][0]-1, self.snake_arr[0][1]])
-    elif self.direction == 3:
-      self.snake_arr.insert(0, [self.snake_arr[0][0], self.snake_arr[0][1]-1])
+    if self._direction == self.DIRECTION_RIGHT:
+      self._snake_arr.insert(0, [self._snake_arr[0][0]+1, self._snake_arr[0][1]])
+    elif self._direction == self.DIRECTION_DOWN:
+      self._snake_arr.insert(0, [self._snake_arr[0][0], self._snake_arr[0][1]+1])
+    elif self._direction == self.DIRECTION_LEFT:
+      self._snake_arr.insert(0, [self._snake_arr[0][0]-1, self._snake_arr[0][1]])
+    elif self._direction == self.DIRECTION_UP:
+      self._snake_arr.insert(0, [self._snake_arr[0][0], self._snake_arr[0][1]-1])
+    
+    self._snake_arr = self._snake_arr[:self._length]  
       
-    if self.add_tail:
-      self.add_tail = False
-    else:
-      self.snake_arr.pop()
-      
-  def add(self):
-    self.add_tail = True
+  def add(self, amount):
+    self._length += amount
   
   def position(self):
-    return self.snake_arr
+    return self._snake_arr
   
   def direc(self, direction):
-    self.direction = direction
+    self._direction = direction
   
   # Out of stage
   def oos(self, grid):
-    if self.snake_arr[0][0] >= grid or self.snake_arr[0][1] >= grid or self.snake_arr[0][0] < 0 or self.snake_arr[0][1] < 0:
+    if self._snake_arr[0][0] >= grid or self._snake_arr[0][1] >= grid or self._snake_arr[0][0] < 0 or self._snake_arr[0][1] < 0:
       return True
     else:
       return False
