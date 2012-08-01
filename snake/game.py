@@ -46,6 +46,8 @@ while done==False:
         snakes[0].direc(Snake.DIRECTION_UP)
       if event.key == pygame.K_DOWN:
         snakes[0].direc(Snake.DIRECTION_DOWN)
+      if event.key == pygame.K_ESCAPE:
+        sys.exit()
 
   # Check for collision with walls
   if snakes[0].oos(grid_size) == True:
