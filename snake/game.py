@@ -88,9 +88,11 @@ while done==False:
   draw_square(screen, [cheese.position()[0]*BLOCK_SIZE,cheese.position()[1]*BLOCK_SIZE,BLOCK_SIZE,BLOCK_SIZE], CHEESE_COL)
   
   # Draw the snake itself
+  snake_draw = 0
   for snake in snakes:
     for point in snake.position():
-      draw_square(screen, [point[0]*BLOCK_SIZE,point[1]*BLOCK_SIZE,BLOCK_SIZE,BLOCK_SIZE], SNAKE_HEAD)
+      draw_square(screen, [point[0]*BLOCK_SIZE,point[1]*BLOCK_SIZE,BLOCK_SIZE,BLOCK_SIZE], SNAKE_HEAD[snake_draw])
+    snake_draw += 1
 
   # Flip the buffer to the display to show the snake
   pygame.display.flip()
