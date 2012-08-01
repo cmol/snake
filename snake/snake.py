@@ -29,6 +29,8 @@ class Snake(object):
       
   def add(self, amount):
     self._length += amount
+    if self._length < 0:
+      self._length = 1
   
   def position(self):
     return self._snake_arr

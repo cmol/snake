@@ -87,18 +87,18 @@ class Game (object):
       # Move the snake
       for snake in self.snakes:
         snake.move()
-        
-      if snake.position()[0][0] == self.cheese.position()[0] and snake.position()[0][1] == self.cheese.position()[1]:
-        snake.add(10)
-        #del self.cheese
-        self.cheese = Cheese(self.grid_size)
+        if snake.position()[0][0] == self.cheese.position()[0] and snake.position()[0][1] == self.cheese.position()[1]:
+          snake.add(10)
+          #del self.cheese
+          self.cheese = Cheese(self.grid_size)
       
       for current_snake in self.snakes:
         for other_snake in self.snakes:
           if other_snake is not current_snake:
             if current_snake.collision(other_snake):
               print("collition")
-              sys.exit()
+              current_snake.add(-5)
+              #sys.exit()
 
       self.clock.tick(60)
     #  print(clock.get_fps())
