@@ -15,7 +15,8 @@ BLOCK_SIZE = 5
 pos_x, pos_y = 0, 0
 direction = 0
 
-SNAKE_HEAD = 18, 255, 0
+SNAKE_HEAD = [(18, 255, 0),(86,162,210),(209,86,210),(241,136,13)]
+
 CHEESE_COL = 255, 255, 0
 
 clock=pygame.time.Clock()
