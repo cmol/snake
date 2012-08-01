@@ -7,11 +7,10 @@ class Snake(object):
   DIRECTION_RIGHT = 4
 
   # Variables for Snake objects
-  _snake_arr = []
-  _direction = 0 
-  _length = 9
 
-  def __init__(self, x, y): 
+  def __init__(self, x, y):
+    self._length = 3
+    self._snake_arr = []
     self._snake_arr.append([x,y])
     self._direction = self.DIRECTION_RIGHT
     print(self._snake_arr)

@@ -41,10 +41,7 @@ class Game (object):
     
     # Create the snakes
     for i in range(0,players):
-      self.snakes.append(Snake(x = self.SNAKE_POS[i][0], y = self.SNAKE_POS[i][1]))
-      print i
-
-  # Inititalize screen and set caption
+      self.snakes.append(Snake(*self.SNAKE_POS[i]))
 
   # Draw a square
   def draw_square(self, screen, rect, color):
