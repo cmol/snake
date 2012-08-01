@@ -10,4 +10,6 @@ parser.add_argument('-g', '--grid', type=int, default=100, help='Grid size')
 parser.add_argument('-b', '--block', type=int, default=5, help='Block size')
 args = parser.parse_args()
 
-print(args.players)
+print args
+game = snake.game.Game(args.players, args.grid, args.block)
+game.start_game()
