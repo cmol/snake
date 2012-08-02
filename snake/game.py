@@ -2,10 +2,11 @@
 import pygame
 from snake import Snake
 from cheese import Cheese
+from threading import Thread
 
 pygame.init()
 
-class Game (object):
+class Game(Thread):
 
   # Background color
   bg_color = 0, 0, 0
@@ -21,7 +22,7 @@ class Game (object):
 
   snakes = []
   
-  SNAKE_HEAD = [(18,255,0),(86,162,210),(209,86,210),(241,136,13)]
+  snake_head = [(18,255,0),(86,162,210),(209,86,210),(241,136,13)]
   SNAKE_POS = [(3, 1), (3, 11), (3, 21), (3, 31), (3, 41), (3, 51), (3, 61), (3, 71)]
 
   CHEESE_COL = 255, 255, 0
@@ -36,7 +37,13 @@ class Game (object):
   DIRECTION_DOWN = 2 
   DIRECTION_LEFT = 3 
   DIRECTION_RIGHT = 4
-  
+
+  #static test 
+  players = 0
+  grid = 0
+  block = 0
+  fullscreen = 0 
+
   event_map = {}
   event_keys = [
     [[pygame.K_LEFT, DIRECTION_LEFT],
@@ -61,7 +68,7 @@ class Game (object):
   
   # Constructor
   def __init__(self, players, grid, block, fullscreen):
-    
+    Thread.__init__(self) 
     self.grid_size = grid
     if not fullscreen:
       self.fullscreen = 0
@@ -74,26 +81,34 @@ class Game (object):
     
     # Create the snakes and attach keys to them
     for i in range(0,players):
-      snake = Snake(self.SNAKE_HEAD[i], *self.SNAKE_POS[i])
-      self.snakes.append(snake)
-      self.attach_keys(snake, self.event_keys[i])
+      Game.spawnSnake()
+
+  @staticmethod
+  def spawnSnake():
+      pos = len(Game.snakes)
+      snake = Snake(Game.snake_head[-1], *Game.SNAKE_POS[pos])
+      Game.snake_head.pop()
+      Game.snakes.append(snake)
+      Game.attach_keys(snake, Game.event_keys[pos])
+      print("Snake spawned")
+      return snake
 
   # Draw a square
   def draw_square(self, screen, rect, color):
     screen.fill(color, rect)
-  
-  # Place keys from our event_keys in our event_map
-  def attach_keys(self, snake, key_maps):
+    
+  @staticmethod
+  def attach_keys(snake, key_maps):
     for key_map in key_maps:
-      self.event_map[key_map[0]] = [snake, key_map[1]]
-  
+      Game.event_map[key_map[0]] = [snake, key_map[1]]
+
   # End game nicely
   def end_game(self):
     exit()
     pygame.quit()
 
   # Run god dammit! RUN!
-  def start_game(self):
+  def run(self):
     # Main loop
     while self.done==False:
       
@@ -123,7 +138,6 @@ class Game (object):
         
         # If snake head is colliding with cheese, make new cheese and add to snake
         if (self.cheese.collide_with(snake.position()[0][0], snake.position()[0][1])):
-#        if snake.position()[0][0] == self.cheese.position()[0] and snake.position()[0][1] == self.cheese.position()[1]:
           snake.add(10)
           self.cheese = Cheese(self.grid_x, self.grid_y)
       
