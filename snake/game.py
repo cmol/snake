@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, pygame
+import pygame
 from snake import Snake
 from cheese import Cheese
 from threading import Thread
@@ -31,7 +31,7 @@ class Game(Thread):
 
   screen = None
   size = None
-  cheeses = []
+  cheese = None
   
   DIRECTION_UP = 1 
   DIRECTION_DOWN = 2 
@@ -77,9 +77,8 @@ class Game(Thread):
     self.size = width, height = self.grid_x*self.BLOCK_SIZE, self.grid_y*self.BLOCK_SIZE
     self.screen = pygame.display.set_mode(self.size, self.fullscreen)
     pygame.display.set_caption("Snake")
-
-    self.cheeses.append(Cheese(self.grid_x, self.grid_y))
-
+    self.cheese = Cheese(self.grid_x, self.grid_y)
+    
     # Create the snakes and attach keys to them
     for i in range(0,players):
       Game.spawnSnake()
@@ -102,49 +101,66 @@ class Game(Thread):
     for key_map in key_maps:
       Game.event_map[key_map[0]] = [snake, key_map[1]]
 
+  # End game nicely
+  def end_game(self):
+    exit()
+    pygame.quit()
+
+  # Run god dammit! RUN!
   def run(self):
+    # Main loop
     while self.done==False:
+      
+      # Check for events (key press etc.)
       for event in pygame.event.get():
         if event.type == pygame.QUIT: sys.exit()
 
+        # Check for key presses and if they are in our event_map
         if event.type == pygame.KEYDOWN:
           if event.key in self.event_map:
             self.event_map[event.key][0].direc(self.event_map[event.key][1])
       
       # Check for collision with walls
+      snake_num = 0
       for snake in self.snakes:
         if snake.oos(self.grid_x, self.grid_y) == True:
-          sys.exit()
+          self.snakes.pop(snake_num)
+          
+          # If less than 2 players are left, end game
+          if len(self.snakes) < 2:
+            self.end_game()
+        snake_num += 1
 
       # Move the snake
       for snake in self.snakes:
         snake.move()
-        for cheese in self.cheeses: 
-          if snake.position()[0][0] == cheese.position()[0] and snake.position()[0][1] == cheese.position()[1]:
-            snake.add(10)
-            self.cheeses[0] = (Cheese(self.grid_x, self.grid_y))
-     
-
+        
+        # If snake head is colliding with cheese, make new cheese and add to snake
+        if (self.cheese.collide_with(snake.position()[0][0], snake.position()[0][1])):
+#        if snake.position()[0][0] == self.cheese.position()[0] and snake.position()[0][1] == self.cheese.position()[1]:
+          snake.add(10)
+          self.cheese = Cheese(self.grid_x, self.grid_y)
+      
+      # Check for collision between snakes
       for current_snake in self.snakes:
         for other_snake in self.snakes:
           if other_snake is not current_snake:
             if current_snake.collision(other_snake):
               print("collition")
               current_snake.add(-5)
-              #sys.exit()
 
-      self.clock.tick(6)
-    #  print(clock.get_fps())
+      self.clock.tick(60)
+      #print(clock.get_fps())
       
       # Clear screen and draw background
       self.screen.fill(self.bg_color)
-
-      for cheese in self.cheeses:
-        self.draw_square(
+      
+      # Draw the cheese
+      self.draw_square(
           self.screen,
-          [cheese.position()[0]*self.BLOCK_SIZE,
-            cheese.position()[1]*self.BLOCK_SIZE,
-            self.BLOCK_SIZE,self.BLOCK_SIZE],
+          [self.cheese.position()[0]*self.BLOCK_SIZE,
+            self.cheese.position()[1]*self.BLOCK_SIZE,
+            self.BLOCK_SIZE*self.cheese.size,self.BLOCK_SIZE*self.cheese.size],
           self.CHEESE_COL)
       
       # Draw the snake itself
@@ -162,5 +178,3 @@ class Game(Thread):
 
       # Flip the buffer to the display to show the snake
       pygame.display.flip()
-      
-    pygame.quit()
