@@ -30,7 +30,7 @@ class Game (object):
 
   screen = None
   size = None
-  cheese = None
+  cheeses = []
   
   fullscreen = pygame.FULLSCREEN
   
@@ -45,7 +45,7 @@ class Game (object):
     self.size = width, height = self.grid_x*self.BLOCK_SIZE, self.grid_y*self.BLOCK_SIZE
     self.screen = pygame.display.set_mode(self.size, self.fullscreen)
     pygame.display.set_caption("Snake")
-    self.cheese = Cheese(self.grid_x, self.grid_y)
+    self.cheeses.append(Cheese(self.grid_x, self.grid_y))
     # Create the snakes
     for i in range(0,players):
       self.snakes.append(Snake(*self.SNAKE_POS[i]))
@@ -94,12 +94,12 @@ class Game (object):
       # Move the snake
       for snake in self.snakes:
         snake.move()
-        
-        if snake.position()[0][0] == self.cheese.position()[0] and snake.position()[0][1] == self.cheese.position()[1]:
-          snake.add(10)
-          #del self.cheese
-          self.cheese = Cheese(self.grid_x, self.grid_y)
-      
+        for cheese in self.cheeses: 
+          if snake.position()[0][0] == cheese.position()[0] and snake.position()[0][1] == cheese.position()[1]:
+            snake.add(10)
+            self.cheeses[0] = (Cheese(self.grid_x, self.grid_y))
+     
+
       for current_snake in self.snakes:
         for other_snake in self.snakes:
           if other_snake is not current_snake:
@@ -113,11 +113,12 @@ class Game (object):
       
       # Clear screen and draw background
       self.screen.fill(self.bg_color)
-      
-      self.draw_square(
+
+      for cheese in self.cheeses:
+        self.draw_square(
           self.screen,
-          [self.cheese.position()[0]*self.BLOCK_SIZE,
-            self.cheese.position()[1]*self.BLOCK_SIZE,
+          [cheese.position()[0]*self.BLOCK_SIZE,
+            cheese.position()[1]*self.BLOCK_SIZE,
             self.BLOCK_SIZE,self.BLOCK_SIZE],
           self.CHEESE_COL)
       
