@@ -1,7 +1,7 @@
 Snake
 =====
 
-This snake like game is for now a small school project just to mess around with python and [pygame](http://pygame.org).
+This snake like game is for now a small school project just to mess around with python and [pygame](http://pygame.org).  
 We haven't worked with python prior to this game to please bear with the code-horror.
 
 Usage:
