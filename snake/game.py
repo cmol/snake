@@ -32,6 +32,31 @@ class Game (object):
   size = None
   cheeses = []
   
+  DIRECTION_UP = 1 
+  DIRECTION_DOWN = 2 
+  DIRECTION_LEFT = 3 
+  DIRECTION_RIGHT = 4
+  
+  event_map = {}
+  event_keys = [
+    [[pygame.K_LEFT, DIRECTION_LEFT],
+      [pygame.K_UP, DIRECTION_UP],
+      [pygame.K_RIGHT, DIRECTION_RIGHT],
+      [pygame.K_DOWN, DIRECTION_DOWN]],
+    [[pygame.K_a, DIRECTION_LEFT],
+      [pygame.K_w, DIRECTION_UP],
+      [pygame.K_d, DIRECTION_RIGHT],
+      [pygame.K_s, DIRECTION_DOWN]],
+    [[pygame.K_j, DIRECTION_LEFT],
+      [pygame.K_i, DIRECTION_UP],
+      [pygame.K_l, DIRECTION_RIGHT],
+      [pygame.K_k, DIRECTION_DOWN]],
+    [[pygame.K_f, DIRECTION_LEFT],
+      [pygame.K_t, DIRECTION_UP],
+      [pygame.K_h, DIRECTION_RIGHT],
+      [pygame.K_g, DIRECTION_DOWN]]
+    ]
+  
   fullscreen = pygame.FULLSCREEN
   
   # Constructor
@@ -45,14 +70,22 @@ class Game (object):
     self.size = width, height = self.grid_x*self.BLOCK_SIZE, self.grid_y*self.BLOCK_SIZE
     self.screen = pygame.display.set_mode(self.size, self.fullscreen)
     pygame.display.set_caption("Snake")
+
     self.cheeses.append(Cheese(self.grid_x, self.grid_y))
-    # Create the snakes
+
+    # Create the snakes and attach keys to them
     for i in range(0,players):
-      self.snakes.append(Snake(*self.SNAKE_POS[i]))
+      snake = Snake(*self.SNAKE_POS[i])
+      self.snakes.append(snake)
+      self.attach_keys(snake, self.event_keys[i])
 
   # Draw a square
   def draw_square(self, screen, rect, color):
     screen.fill(color, rect)
+    
+  def attach_keys(self, snake, key_maps):
+    for key_map in key_maps:
+      self.event_map[key_map[0]] = [snake, key_map[1]]
 
   def start_game(self):
     while self.done==False:
@@ -60,31 +93,8 @@ class Game (object):
         if event.type == pygame.QUIT: sys.exit()
 
         if event.type == pygame.KEYDOWN:
-        # Figure out if it was an arrow key, and set direction
-          if event.key == pygame.K_LEFT:
-            self.snakes[0].direc(Snake.DIRECTION_LEFT)
-          if event.key == pygame.K_RIGHT:
-            self.snakes[0].direc(Snake.DIRECTION_RIGHT)
-          if event.key == pygame.K_UP:
-            self.snakes[0].direc(Snake.DIRECTION_UP)
-          if event.key == pygame.K_DOWN:
-            self.snakes[0].direc(Snake.DIRECTION_DOWN)
-          if event.key == pygame.K_ESCAPE:
-            sys.exit()
-
-          if len(self.snakes) == 1:
-            if (event.key == pygame.K_a or event.key == pygame.K_d or event.key ==
-                pygame.K_w or event.key == pygame.K_s) and len(self.snakes) == 1:
-              self.snakes.append(Snake(x = 20, y = 1))
-          else:
-            if event.key == pygame.K_a:
-              self.snakes[1].direc(Snake.DIRECTION_LEFT)
-            if event.key == pygame.K_d:
-              self.snakes[1].direc(Snake.DIRECTION_RIGHT)
-            if event.key == pygame.K_w:
-              self.snakes[1].direc(Snake.DIRECTION_UP)
-            if event.key == pygame.K_s:
-              self.snakes[1].direc(Snake.DIRECTION_DOWN)
+          if event.key in self.event_map:
+            self.event_map[event.key][0].direc(self.event_map[event.key][1])
       
       # Check for collision with walls
       for snake in self.snakes:
