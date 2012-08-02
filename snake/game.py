@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import sys, pygame
+import pygame
 from snake import Snake
 from cheese import Cheese
 
