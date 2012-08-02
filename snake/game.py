@@ -2,10 +2,11 @@
 import sys, pygame
 from snake import Snake
 from cheese import Cheese
+from threading import Thread
 
 pygame.init()
 
-class Game (object):
+class Game(Thread):
 
   # Background color
   bg_color = 0, 0, 0
@@ -36,7 +37,13 @@ class Game (object):
   DIRECTION_DOWN = 2 
   DIRECTION_LEFT = 3 
   DIRECTION_RIGHT = 4
-  
+
+  #static test 
+  players = 0
+  grid = 0
+  block = 0
+  fullscreen = 0 
+
   event_map = {}
   event_keys = [
     [[pygame.K_LEFT, DIRECTION_LEFT],
@@ -61,7 +68,7 @@ class Game (object):
   
   # Constructor
   def __init__(self, players, grid, block, fullscreen):
-    
+    Thread.__init__(self) 
     self.grid_size = grid
     if not fullscreen:
       self.fullscreen = 0
@@ -75,19 +82,27 @@ class Game (object):
 
     # Create the snakes and attach keys to them
     for i in range(0,players):
-      snake = Snake(*self.SNAKE_POS[i])
-      self.snakes.append(snake)
-      self.attach_keys(snake, self.event_keys[i])
+      Game.spawnSnake()
+
+  @staticmethod
+  def spawnSnake():
+      pos = len(Game.snakes)
+      snake = Snake(*Game.SNAKE_POS[pos])
+      Game.snakes.append(snake)
+      Game.attach_keys(snake, Game.event_keys[pos])
+      print("Snake spawned")
+      return snake
 
   # Draw a square
   def draw_square(self, screen, rect, color):
     screen.fill(color, rect)
     
-  def attach_keys(self, snake, key_maps):
+  @staticmethod
+  def attach_keys(snake, key_maps):
     for key_map in key_maps:
-      self.event_map[key_map[0]] = [snake, key_map[1]]
+      Game.event_map[key_map[0]] = [snake, key_map[1]]
 
-  def start_game(self):
+  def run(self):
     while self.done==False:
       for event in pygame.event.get():
         if event.type == pygame.QUIT: sys.exit()
@@ -118,7 +133,7 @@ class Game (object):
               current_snake.add(-5)
               #sys.exit()
 
-      self.clock.tick(60)
+      self.clock.tick(6)
     #  print(clock.get_fps())
       
       # Clear screen and draw background
