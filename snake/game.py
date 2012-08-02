@@ -85,6 +85,10 @@ class Game (object):
   def attach_keys(self, snake, key_maps):
     for key_map in key_maps:
       self.event_map[key_map[0]] = [snake, key_map[1]]
+  
+  def end_game(self):
+    exit()
+    pygame.quit()
 
   def start_game(self):
     while self.done==False:
@@ -98,7 +102,7 @@ class Game (object):
       # Check for collision with walls
       for snake in self.snakes:
         if snake.oos(self.grid_x, self.grid_y) == True:
-          sys.exit()
+          self.end_game()
 
       # Move the snake
       for snake in self.snakes:
@@ -145,5 +149,3 @@ class Game (object):
 
       # Flip the buffer to the display to show the snake
       pygame.display.flip()
-      
-    pygame.quit()
