@@ -122,7 +122,8 @@ class Game (object):
         snake.move()
         
         # If snake head is colliding with cheese, make new cheese and add to snake
-        if snake.position()[0][0] == self.cheese.position()[0] and snake.position()[0][1] == self.cheese.position()[1]:
+        if (self.cheese.collide_with(snake.position()[0][0], snake.position()[0][1])):
+#        if snake.position()[0][0] == self.cheese.position()[0] and snake.position()[0][1] == self.cheese.position()[1]:
           snake.add(10)
           self.cheese = Cheese(self.grid_x, self.grid_y)
       
@@ -145,7 +146,7 @@ class Game (object):
           self.screen,
           [self.cheese.position()[0]*self.BLOCK_SIZE,
             self.cheese.position()[1]*self.BLOCK_SIZE,
-            self.BLOCK_SIZE,self.BLOCK_SIZE],
+            self.BLOCK_SIZE*self.cheese.size,self.BLOCK_SIZE*self.cheese.size],
           self.CHEESE_COL)
       
       # Draw the snake itself
