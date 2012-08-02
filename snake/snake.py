@@ -8,7 +8,9 @@ class Snake(object):
 
   # Variables for Snake objects
 
-  def __init__(self, x, y):
+  def __init__(self, color, x, y):
+    # Get snake color
+    self._col = color
     self._length = 3
     self._snake_arr = []
     self._snake_arr.append([x,y])
@@ -34,6 +36,9 @@ class Snake(object):
   
   def position(self):
     return self._snake_arr
+    
+  def color(self):
+    return self._col
   
   def direc(self, direction):
     self._direction = direction

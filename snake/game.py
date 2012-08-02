@@ -21,8 +21,8 @@ class Game (object):
 
   snakes = []
   
-  SNAKE_HEAD = [(18, 255, 0),(86,162,210),(209,86,210),(241,136,13)]
-  SNAKE_POS = [(3, 1), (3, 11), (3, 21), (3, 31)]
+  SNAKE_HEAD = [(18,255,0),(86,162,210),(209,86,210),(241,136,13)]
+  SNAKE_POS = [(3, 1), (3, 11), (3, 21), (3, 31), (3, 41), (3, 51), (3, 61), (3, 71)]
 
   CHEESE_COL = 255, 255, 0
 
@@ -74,7 +74,7 @@ class Game (object):
     
     # Create the snakes and attach keys to them
     for i in range(0,players):
-      snake = Snake(*self.SNAKE_POS[i])
+      snake = Snake(self.SNAKE_HEAD[i], *self.SNAKE_POS[i])
       self.snakes.append(snake)
       self.attach_keys(snake, self.event_keys[i])
 
@@ -150,7 +150,6 @@ class Game (object):
           self.CHEESE_COL)
       
       # Draw the snake itself
-      snake_draw = 0
       for snake in self.snakes:
         for point in snake.position():
           self.draw_square(
@@ -158,9 +157,7 @@ class Game (object):
             [point[0]*self.BLOCK_SIZE,
               point[1]*self.BLOCK_SIZE,
               self.BLOCK_SIZE,self.BLOCK_SIZE],
-            self.SNAKE_HEAD[snake_draw])
-        
-        snake_draw += 1
+            snake.color())
 
       # Flip the buffer to the display to show the snake
       pygame.display.flip()
