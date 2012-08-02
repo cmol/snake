@@ -81,20 +81,27 @@ class Game (object):
   # Draw a square
   def draw_square(self, screen, rect, color):
     screen.fill(color, rect)
-    
+  
+  # Place keys from our event_keys in our event_map
   def attach_keys(self, snake, key_maps):
     for key_map in key_maps:
       self.event_map[key_map[0]] = [snake, key_map[1]]
   
+  # End game nicely
   def end_game(self):
     exit()
     pygame.quit()
 
+  # Run god dammit! RUN!
   def start_game(self):
+    # Main loop
     while self.done==False:
+      
+      # Check for events (key press etc.)
       for event in pygame.event.get():
         if event.type == pygame.QUIT: sys.exit()
 
+        # Check for key presses and if they are in our event_map
         if event.type == pygame.KEYDOWN:
           if event.key in self.event_map:
             self.event_map[event.key][0].direc(self.event_map[event.key][1])
@@ -104,6 +111,8 @@ class Game (object):
       for snake in self.snakes:
         if snake.oos(self.grid_x, self.grid_y) == True:
           self.snakes.pop(snake_num)
+          
+          # If less than 2 players are left, end game
           if len(self.snakes) < 2:
             self.end_game()
         snake_num += 1
@@ -112,25 +121,26 @@ class Game (object):
       for snake in self.snakes:
         snake.move()
         
+        # If snake head is colliding with cheese, make new cheese and add to snake
         if snake.position()[0][0] == self.cheese.position()[0] and snake.position()[0][1] == self.cheese.position()[1]:
           snake.add(10)
-          #del self.cheese
           self.cheese = Cheese(self.grid_x, self.grid_y)
       
+      # Check for collision between snakes
       for current_snake in self.snakes:
         for other_snake in self.snakes:
           if other_snake is not current_snake:
             if current_snake.collision(other_snake):
               print("collition")
               current_snake.add(-5)
-              #sys.exit()
 
       self.clock.tick(60)
-    #  print(clock.get_fps())
+      #print(clock.get_fps())
       
       # Clear screen and draw background
       self.screen.fill(self.bg_color)
       
+      # Draw the cheese
       self.draw_square(
           self.screen,
           [self.cheese.position()[0]*self.BLOCK_SIZE,
