@@ -88,8 +88,8 @@ class Game(Thread):
   @staticmethod
   def spawnSnake():
       pos = len(Game.snakes)
-      snake = Snake(Game.snake_head[-1], *Game.SNAKE_POS[pos])
-      Game.snake_head.pop()
+      snake = Snake(Game.snake_head[0], *Game.SNAKE_POS[pos])
+      Game.snake_head.pop(0)
       Game.snakes.append(snake)
       Game.attach_keys(snake, Game.event_keys[pos])
       print("Snake spawned")
