@@ -2,6 +2,7 @@
 import argparse
 import snake
 from snake.snake_net import SnakeFactory, SnakeRemote
+from twisted.internet import threads, protocol, reactor
 
 parser = argparse.ArgumentParser(prog='snake.py',
                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
