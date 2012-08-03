@@ -149,7 +149,7 @@ class Game(Thread):
         for other_snake in self.snakes:
           if other_snake is not current_snake:
             if current_snake.collision(other_snake):
-              print("collition")
+              print("collision")
               current_snake.add(-5)
 
       self.clock.tick(60)
