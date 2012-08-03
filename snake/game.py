@@ -4,7 +4,6 @@ from snake import Snake
 from cheese import Cheese
 from threading import Thread
 import thread
-import sys
 
 pygame.init()
 
@@ -108,7 +107,7 @@ class Game(Thread):
   def end_game(self):
     pygame.quit()
     thread.interrupt_main()
-    sys.exit()
+    exit()
 
   # Run god dammit! RUN!
   def run(self):
