@@ -3,6 +3,8 @@ import pygame
 from snake import Snake
 from cheese import Cheese
 from threading import Thread
+import thread
+import sys
 
 pygame.init()
 
@@ -104,8 +106,9 @@ class Game(Thread):
 
   # End game nicely
   def end_game(self):
-    exit()
     pygame.quit()
+    thread.interrupt_main()
+    sys.exit()
 
   # Run god dammit! RUN!
   def run(self):
