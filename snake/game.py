@@ -24,7 +24,7 @@ class Game(Thread):
 
   snakes = []
   
-  snake_head = [(18,255,0),(86,162,210),(209,86,210),(241,136,13)]
+  snake_head = [(18,255,0),(134,197,237),(209,86,210),(241,136,13),(255,0,0),(29,255,204),(255,255,0),(255,255,255)]
   SNAKE_POS = [(3, 1), (3, 11), (3, 21), (3, 31), (3, 41), (3, 51), (3, 61), (3, 71)]
 
   CHEESE_COL = 255, 255, 0
@@ -149,7 +149,7 @@ class Game(Thread):
         for other_snake in self.snakes:
           if other_snake is not current_snake:
             if current_snake.collision(other_snake):
-              print("collision")
+              print("collition")
               current_snake.add(-5)
 
       self.clock.tick(60)
