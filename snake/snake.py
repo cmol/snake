@@ -45,14 +45,9 @@ class Snake(object):
 
   """ See if this snake (self) has crashed into the other snake (snake) """
   def collision(self, snake):
-    """ Head on collision """
-    if self._snake_arr[0] == snake._snake_arr[0]:
-      return True
-
-    for other_snake in snake._snake_arr[:-1]:
-      for this_snake in self._snake_arr:
-        if other_snake == this_snake:
-          return True
+    for other_snake in snake._snake_arr:
+      if other_snake == self._snake_arr[0]:
+        return True
     return False
 
   # Out of stage
