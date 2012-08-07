@@ -3,6 +3,8 @@ import argparse
 import snake
 from snake.game_server import GameServer, GameServerFactory
 from twisted.internet import threads, protocol, reactor
+from twisted.internet.task import LoopingCall
+
 
 parser = argparse.ArgumentParser(prog='snake.py',
                                 formatter_class=argparse.ArgumentDefaultsHelpFormatter,
@@ -17,8 +19,10 @@ args = parser.parse_args()
 
 if args.server:
   server = GameServer()
-  server.threadServer()
-  server.start()
+#  server.threadServer()
+#  server.start()
+  tick = LoopingCall(server.update)
+  tick.start(1)
   reactor.listenTCP(9999, GameServerFactory())
   reactor.run()
 else:
