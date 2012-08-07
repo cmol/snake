@@ -4,10 +4,11 @@ from snake import Snake
 from cheese import Cheese
 from threading import Thread
 import thread
+from twisted.internet import threads, protocol, reactor
 
 pygame.init()
 
-class Game(Thread):
+class Game(Thread, protocol):
 
   # Background color
   bg_color = 0, 0, 0
@@ -84,16 +85,6 @@ class Game(Thread):
     for i in range(0,players):
       Game.spawnSnake()
 
-  @staticmethod
-  def spawnSnake():
-      pos = len(Game.snakes)
-      snake = Snake(Game.snake_head[0], *Game.SNAKE_POS[pos])
-      Game.snake_head.pop(0)
-      Game.snakes.append(snake)
-      Game.attach_keys(snake, Game.event_keys[pos])
-      print("Snake spawned")
-      return snake
-
   # Draw a square
   def draw_square(self, screen, rect, color):
     screen.fill(color, rect)
@@ -122,7 +113,9 @@ class Game(Thread):
         if event.type == pygame.KEYDOWN:
           if event.key in self.event_map:
             self.event_map[event.key][0].direc(self.event_map[event.key][1])
-      
+
+      GameServer.moveSnakes()
+
       # Check for collision with walls
       snake_num = 0
       for snake in self.snakes:
@@ -134,9 +127,7 @@ class Game(Thread):
             self.end_game()
         snake_num += 1
 
-      # Move the snake
-      for snake in self.snakes:
-        snake.move()
+
         
         # If snake head is colliding with cheese, make new cheese and add to snake
         if (self.cheese.collide_with(snake.position()[0][0], snake.position()[0][1])):
@@ -157,23 +148,7 @@ class Game(Thread):
       # Clear screen and draw background
       self.screen.fill(self.bg_color)
       
-      # Draw the cheese
-      self.draw_square(
-          self.screen,
-          [self.cheese.position()[0]*self.BLOCK_SIZE,
-            self.cheese.position()[1]*self.BLOCK_SIZE,
-            self.BLOCK_SIZE*self.cheese.size,self.BLOCK_SIZE*self.cheese.size],
-          self.CHEESE_COL)
-      
-      # Draw the snake itself
-      for snake in self.snakes:
-        for point in snake.position():
-          self.draw_square(
-            self.screen,
-            [point[0]*self.BLOCK_SIZE,
-              point[1]*self.BLOCK_SIZE,
-              self.BLOCK_SIZE,self.BLOCK_SIZE],
-            snake.color())
+
 
       # Flip the buffer to the display to show the snake
       pygame.display.flip()

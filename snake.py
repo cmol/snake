@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import argparse
 import snake
-from snake.snake_net import SnakeFactory, SnakeRemote
+from snake.game_server import GameServer, GameServerFactory
 from twisted.internet import threads, protocol, reactor
 
 parser = argparse.ArgumentParser(prog='snake.py',
@@ -11,12 +11,15 @@ parser.add_argument('-p', '--players', type=int, default=1, help='Number of play
 parser.add_argument('-g', '--grid', type=int, default=100, help='Grid size')
 parser.add_argument('--fullscreen',action='store_true', help='Fullscreen')
 parser.add_argument('-b', '--block', type=int, default=5, help='Block size')
+parser.add_argument('-s', '--server', action='store_true', help='Is this a server?')
+parser.add_argument('-c', '--connect', type=str, default='127.0.0.1', help='If this is a cliient, what is the server address?')
 args = parser.parse_args()
 
-game = snake.game.Game(args.players, args.grid, args.block, args.fullscreen)
-
-reactor.listenTCP(9999, SnakeFactory())
-
-game.start()
-
-reactor.run()
+if args.server:
+  server = GameServer()
+#  server.start()
+  reactor.listenTCP(9999, GameServerFactory())
+  reactor.run()
+else:
+  pass
+#  game = snake.game.Game(args.players, args.grid, args.block, args.fullscreen)
