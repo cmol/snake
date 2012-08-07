@@ -1,3 +1,4 @@
+""""
 #!/usr/bin/env python
 import pygame
 from snake import Snake
@@ -152,3 +153,4 @@ class Game(Thread, protocol):
 
       # Flip the buffer to the display to show the snake
       pygame.display.flip()
+"""
