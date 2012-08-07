@@ -24,7 +24,7 @@ if args.server:
 #  server.threadServer()
 #  server.start()
   tick = LoopingCall(server.update)
-  tick.start(1)
+  tick.start(.01)
   reactor.listenTCP(9999, GameServerFactory())
   reactor.run()
 elif args.client:

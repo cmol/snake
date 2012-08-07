@@ -1,6 +1,6 @@
 import cPickle
 from threading import Thread
-from twisted.internet import protocol
+from twisted.internet import protocol, reactor, defer
 from snake import Snake
 import pygame
 
@@ -24,7 +24,7 @@ class GameServer(protocol.Protocol, Thread):
     pass
 
   def threadServer(self):
-    Thread.__init__(self) 
+    Thread.__init__(self)
     GameServer.__server = self
 
   def connectionMade(self):
@@ -33,10 +33,25 @@ class GameServer(protocol.Protocol, Thread):
     GameServer.__servers.append(self)
 
   def connectionLost(self, reason):
-    pass
+    print("Connection lost")
+    for idx in range(len(self.__snakes)):
+      if self.__snakes[idx] is self.__snake:
+        del self.__snakes[idx]
+        print("Snake killed")
+        break
+    for idx in range(len(self.__servers)):
+      if self.__servers[idx] is self:
+        del self.__servers[idx]
+        del self
+        print("Connection killed")
+        break
 
   def dataReceived(self, data):
-    self.__snake.direc(int(data.rstrip()))
+    #self.transport.write('noget')
+    try:
+      self.__snake.direc(int(data.rstrip()))
+    except:
+      pass
 
   @staticmethod
   def moveSnakes():
@@ -69,9 +84,12 @@ class GameServer(protocol.Protocol, Thread):
   
   def run(self):
     while True:
-      self.moveSnakes()
-      self.sendSnakes()
+      self.update()
       self.__clock.tick(1)
+  
+  def update(self):
+    self.moveSnakes()
+    self.sendSnakes()
 
 
 class GameServerFactory(protocol.Factory):
