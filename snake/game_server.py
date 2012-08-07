@@ -2,6 +2,7 @@ import cPickle
 from threading import Thread
 from twisted.internet import protocol
 from snake import Snake
+import pygame
 
 #Mostly static?
 class GameServer(protocol.Protocol, Thread):
@@ -13,8 +14,11 @@ class GameServer(protocol.Protocol, Thread):
 
   __snakes = []
   __servers = []
+  __cheeses = []
   #__server should not be in __servers
   __server = None
+
+  __clock = pygame.time.Clock()
   
   def __init__(self):
     pass
@@ -27,6 +31,9 @@ class GameServer(protocol.Protocol, Thread):
     print("Connection made")
     self.__snake = GameServer.spawnSnake()
     GameServer.__servers.append(self)
+
+  def connectionLost(self, reason):
+    pass
 
   def dataReceived(self, data):
     self.__snake.direc(int(data.rstrip()))
@@ -55,9 +62,17 @@ class GameServer(protocol.Protocol, Thread):
   @staticmethod
   def sendSnakes():
     data = {'snakes':GameServer.__snakes, 'cheeses':GameServer.__cheeses}
-    data_pickled = pickle.dumps(data)
+    data_pickled = cPickle.dumps(data)
     for server in GameServer.__servers:
+      #print(data_pickled)
       server.transport.write(data_pickled)
+  
+  def run(self):
+    while True:
+      self.moveSnakes()
+      self.sendSnakes()
+      self.__clock.tick(1)
+
 
 class GameServerFactory(protocol.Factory):
   def buildProtocol(self, addr):

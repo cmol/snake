@@ -17,7 +17,8 @@ args = parser.parse_args()
 
 if args.server:
   server = GameServer()
-#  server.start()
+  server.threadServer()
+  server.start()
   reactor.listenTCP(9999, GameServerFactory())
   reactor.run()
 else:
