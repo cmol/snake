@@ -104,10 +104,13 @@ class GameClient(LineReceiver):
     print("Connection made")
     
   def dataReceived(self, p_data):
-    data = cPickle.loads(p_data)
-    self.snakes = data["snakes"]
-    self.cheeses = data["cheeses"]
-    self.play_round()
+    try:
+      data = cPickle.loads(p_data)
+      self.snakes = data["snakes"]
+      self.cheeses = data["cheeses"]
+      self.play_round()
+    except:
+      print p_data
 
   def lineReceived(self, line):
     data = dumps(line)
