@@ -59,19 +59,6 @@ class GameClient(LineReceiver):
   def draw_screen(self):
     # Paint everything black
     self.screen.fill(self.bg_color)
-    
-    # Draw the cheeses
-    for cheese in self.cheeses:
-      self.draw_square(
-        self.screen,
-          [
-            cheese.position()[0]*self.block_size,
-            cheese.position()[1]*self.block_size,
-            self.block_size*cheese.size,
-            self.block_size*cheese.size
-          ],
-          self.CHEESE_COL
-        )
       
     # Draw the snake itself
     for snake in self.snakes:
@@ -86,6 +73,19 @@ class GameClient(LineReceiver):
           ],
           snake.color()
         )
+        
+    # Draw the cheeses
+    for cheese in self.cheeses:
+      self.draw_square(
+        self.screen,
+          [
+            cheese.position()[0]*self.block_size,
+            cheese.position()[1]*self.block_size,
+            self.block_size*cheese.size,
+            self.block_size*cheese.size
+          ],
+          self.CHEESE_COL
+        )
     
     # Show everything
     pygame.display.flip()
@@ -97,28 +97,32 @@ class GameClient(LineReceiver):
         
   # End the game nicely
   def end_game(self):
-    exit() # That's not nice!
+    self.stopProducing() # That's not nice!
   
   # ==== From here networking occurs ====  
   def connectionMade(self):
     print("Connection made")
     
-  def dataReceived(self, p_data):
-    try:
-      data = cPickle.loads(p_data)
-      self.snakes = data["snakes"]
-      self.cheeses = data["cheeses"]
-      self.play_round()
-    except:
-      print p_data
+  #def dataReceived(self, p_data):
+  #  try:
+  #    data = cPickle.loads(p_data)
+  #    self.snakes = data["snakes"]
+  #    self.cheeses = data["cheeses"]
+  #  except Exception as e:
+  #    print p_data
+  #    print e
+  #    reactor.stop()
+  #  self.play_round()
 
   def lineReceived(self, line):
-    data = dumps(line)
-    print data
-    self.snakes = data["Snakes"]
-    self.play_rounds()
-    if line==self.end:
-      self.transport.loseConnection()
+    try:
+      data = cPickle.loads(line)
+      self.snakes = data["snakes"]
+      self.cheeses = data["cheeses"]
+    except Exception as e:
+      print p_data
+      print e
+    self.play_round()
 
 class GameClientFactory(ClientFactory):
   protocol = GameClient
