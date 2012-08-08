@@ -81,11 +81,12 @@ class GameServer(protocol.Protocol, Thread):
 
   @staticmethod
   def sendPlayfieldContent():
-    data = {'snakes':GameServer.__snakes, 'cheeses':GameServer.__cheeses}
-    #data = {'snakes':GameServer.__snakes}
-    data_pickled = cPickle.dumps(data, -1)
-    for server in GameServer.__servers:
-      server.transport.write(data_pickled)
+    if len(GameServer.__servers) > 0:
+      data = {'snakes':GameServer.__snakes, 'cheeses':GameServer.__cheeses}
+      #data = {'snakes':GameServer.__snakes}
+      data_pickled = cPickle.dumps(data, -1)
+      for server in GameServer.__servers:
+        server.transport.write("%s\r\n" % data_pickled)
  
   #Wallcrash
   @staticmethod
