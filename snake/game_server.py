@@ -3,6 +3,10 @@ from threading import Thread
 from twisted.internet import protocol, reactor, defer
 from snake import Snake
 import pygame
+import logging
+from cheese import Cheese
+
+logging.basicConfig(level=logging.DEBUG)
 
 #Mostly static?
 class GameServer(protocol.Protocol, Thread):
@@ -11,6 +15,9 @@ class GameServer(protocol.Protocol, Thread):
   __SNAKE_POS = [(3, 1), (3, 11), (3, 21), (3, 31), (3, 41), (3, 51), (3, 61), (3, 71)]
   __CHEESE_COL = 255, 255, 0
 
+
+  #(blocksize, grid_x, grid_y)
+  __playfield = (15, 100, 100)
 
   __snakes = []
   __servers = []
@@ -28,33 +35,31 @@ class GameServer(protocol.Protocol, Thread):
     GameServer.__server = self
 
   def connectionMade(self):
-    print("Connection made")
+    logging.info("Connection established")
     self.__snake = GameServer.spawnSnake()
     GameServer.__servers.append(self)
+    #Not ready in the client yet
+    #self.transport.write(cPickle.dumps(GameServer.__playfield))
 
   def connectionLost(self, reason):
-    print("Connection lost")
-    for idx in range(len(self.__snakes)):
-      if self.__snakes[idx] is self.__snake:
-        del self.__snakes[idx]
-        print("Snake killed")
-        break
+    logging.info("Connection lost, %s" % reason.getErrorMessage())
+    GameServer.snakeRemove(self.__snake)
     for idx in range(len(self.__servers)):
       if self.__servers[idx] is self:
         del self.__servers[idx]
         del self
-        print("Connection killed")
+        logging.info("Instance killed")
         break
 
   def dataReceived(self, data):
     #self.transport.write('noget')
     try:
-      self.__snake.direc(int(data.rstrip()))
-    except:
-      pass
+      self.__snake.direc(int(data.rstrip()[-1]))
+    except Exception as e:
+      logging.warning("Weird data received, %s, %s" % (data,e))
 
   @staticmethod
-  def moveSnakes():
+  def snakesMove():
     for snake in GameServer.__snakes:
       snake.move()
     return True
@@ -71,29 +76,70 @@ class GameServer(protocol.Protocol, Thread):
       ]
     )
     GameServer.__snakes.append(snake)
-    print('Snake spawned')
+    logging.info('Snake spawned')
     return snake
 
   @staticmethod
-  def sendSnakes():
+  def sendPlayfieldContent():
     data = {'snakes':GameServer.__snakes, 'cheeses':GameServer.__cheeses}
-    data_pickled = cPickle.dumps(data)
+    #data = {'snakes':GameServer.__snakes}
+    data_pickled = cPickle.dumps(data, -1)
     for server in GameServer.__servers:
-      #print(data_pickled)
       server.transport.write(data_pickled)
-  
+ 
+  #Wallcrash
+  @staticmethod
+  def snakesCrash():
+    for snake in GameServer.__snakes:
+      if snake.oos(GameServer.__playfield[1], GameServer.__playfield[2]) == True:
+        logging.info("Snake crashed with playfield, removing")
+        GameServer.snakeRemove(snake)
+
+  @staticmethod
+  def snakesCollide():
+    for current_snake in GameServer.__snakes:
+      for other_snake in GameServer.__snakes:
+        if other_snake is not current_snake:
+          if current_snake.collision(other_snake):
+            logging.debug("collision")
+            current_snake.add(-5)
+
+  @staticmethod
+  def snakeRemove(snake):
+    """TODO: Reduce all this searching!"""
+    for idx in range(len(GameServer.__snakes)):
+      if GameServer.__snakes[idx] is snake:
+        del GameServer.__snakes[idx]
+        logging.info("Snake removed")
+        return True
+    logging.warning("Snake not in the game")
+    return False
+
+  #First come (in __snakes), first served
+  @staticmethod
+  def snakesNom():
+    for sidx in range(len(GameServer.__snakes)):
+      for cidx in range(len(GameServer.__cheeses)):
+        if (GameServer.__cheeses[cidx].collide_with(GameServer.__snakes[sidx].position()[0][0], GameServer.__snakes[sidx].position()[0][1])):
+          GameServer.__snakes[sidx].add(10)
+          del GameServer.__cheeses[cidx]
+          GameServer.__cheeses.append(Cheese(GameServer.__playfield[1], GameServer.__playfield[2]))
+
   def run(self):
     while True:
       self.update()
       self.__clock.tick(1)
   
   def update(self):
-    self.moveSnakes()
-    self.sendSnakes()
+    if len(GameServer.__cheeses) == 0:
+      GameServer.__cheeses.append(Cheese(GameServer.__playfield[1], GameServer.__playfield[2]))
+    self.snakesMove()
+    self.snakesCollide()
+    self.snakesCrash()
+    self.snakesNom()
+    self.sendPlayfieldContent()
 
 
 class GameServerFactory(protocol.Factory):
   def buildProtocol(self, addr):
     return GameServer()
-
-

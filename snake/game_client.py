@@ -65,10 +65,10 @@ class GameClient(LineReceiver):
       self.draw_square(
         self.screen,
           [
-            self.cheese.position()[0]*self.block_size,
-            self.cheese.position()[1]*self.block_size,
-            self.block_size*self.cheese.size,
-            self.block_size*self.cheese.size
+            cheese.position()[0]*self.block_size,
+            cheese.position()[1]*self.block_size,
+            self.block_size*cheese.size,
+            self.block_size*cheese.size
           ],
           self.CHEESE_COL
         )
