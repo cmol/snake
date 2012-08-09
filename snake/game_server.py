@@ -1,20 +1,18 @@
 import cPickle
-from threading import Thread
-from twisted.internet import protocol, reactor, defer
-from snake import Snake
+from twisted.internet import protocol
 import pygame
 import logging
+
+from snake import Snake
 from cheese import Cheese
 
 logging.basicConfig(level=logging.DEBUG)
 
-#Mostly static?
-class GameServer(protocol.Protocol, Thread):
+class GameServer(protocol.Protocol):
 
   __SNAKE_HEAD = [(18,255,0),(134,197,237),(209,86,210),(241,136,13),(255,0,0),(29,255,204),(255,255,0),(255,255,255)]
   __SNAKE_POS = [(3, 1), (3, 11), (3, 21), (3, 31), (3, 41), (3, 51), (3, 61), (3, 71)]
   __CHEESE_COL = 255, 255, 0
-
 
   #(blocksize, grid_x, grid_y)
   __playfield = (15, 100, 100)
@@ -22,17 +20,10 @@ class GameServer(protocol.Protocol, Thread):
   __snakes = []
   __servers = []
   __cheeses = []
-  #__server should not be in __servers
-  __server = None
 
-  __clock = pygame.time.Clock()
-  
   def __init__(self):
-    pass
-
-  def threadServer(self):
-    Thread.__init__(self)
-    GameServer.__server = self
+    if len(GameServer.__cheeses) == 0:
+      GameServer.__cheeses.append(Cheese(GameServer.__playfield[1], GameServer.__playfield[2]))
 
   def connectionMade(self):
     logging.info("Connection established")
@@ -86,7 +77,7 @@ class GameServer(protocol.Protocol, Thread):
       #data = {'snakes':GameServer.__snakes}
       data_pickled = cPickle.dumps(data, -1)
       for server in GameServer.__servers:
-        server.transport.write("%s\r\n" % data_pickled)
+        server.transport.write(data_pickled + "\r\n")
  
   #Wallcrash
   @staticmethod
@@ -125,21 +116,14 @@ class GameServer(protocol.Protocol, Thread):
           GameServer.__snakes[sidx].add(10)
           del GameServer.__cheeses[cidx]
           GameServer.__cheeses.append(Cheese(GameServer.__playfield[1], GameServer.__playfield[2]))
+          logging.info("NOM!")
 
-  def run(self):
-    while True:
-      self.update()
-      self.__clock.tick(1)
-  
   def update(self):
-    if len(GameServer.__cheeses) == 0:
-      GameServer.__cheeses.append(Cheese(GameServer.__playfield[1], GameServer.__playfield[2]))
     self.snakesMove()
     self.snakesCollide()
     self.snakesCrash()
     self.snakesNom()
     self.sendPlayfieldContent()
-
 
 class GameServerFactory(protocol.Factory):
   def buildProtocol(self, addr):
