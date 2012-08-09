@@ -5,6 +5,8 @@ from twisted.internet import reactor
 import pygame
 from snake import Snake
 from cheese import Cheese
+from client_input import ClientInput
+import threading
 
 pygame.init()
   
@@ -23,23 +25,13 @@ class GameClient(LineReceiver):
   grid_x = grid_size
   grid_y = grid_size
   
-  # Directions
-  DIRECTION_UP = 1 
-  DIRECTION_DOWN = 2 
-  DIRECTION_LEFT = 3 
-  DIRECTION_RIGHT = 4
-  
-  # Event keys
-  event_map = {pygame.K_LEFT: DIRECTION_LEFT,
-      pygame.K_UP: DIRECTION_UP,
-      pygame.K_RIGHT: DIRECTION_RIGHT,
-      pygame.K_DOWN: DIRECTION_DOWN}
-  
   def __init__(self):
     # Initialize screen 
     size = width, height = self.grid_x*self.block_size, self.grid_y*self.block_size
     self.screen = pygame.display.set_mode(size)
     pygame.display.set_caption("Snake")
+    self.client_input = ClientInput(self)
+    self.client_input.start()
     
   # Draw a square
   def draw_square(self, screen, rect, color):
@@ -90,29 +82,18 @@ class GameClient(LineReceiver):
     # Show everything
     pygame.display.flip()
     
-        
+  # Do whatever needs to be done pr update
   def play_round(self):
     self.draw_screen()
-    self.check_events()
         
   # End the game nicely
   def end_game(self):
-    self.stopProducing() # That's not nice!
+    self.stopProducing() # That's nice!
   
   # ==== From here networking occurs ====  
   def connectionMade(self):
     print("Connection made")
-    
-  #def dataReceived(self, p_data):
-  #  try:
-  #    data = cPickle.loads(p_data)
-  #    self.snakes = data["snakes"]
-  #    self.cheeses = data["cheeses"]
-  #  except Exception as e:
-  #    print p_data
-  #    print e
-  #    reactor.stop()
-  #  self.play_round()
+
 
   def lineReceived(self, line):
     try:
